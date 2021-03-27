@@ -1,5 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
-// import { In } from 'typeorm';
+import { uuid } from 'uuidv4';
 
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ICreateProductDTO from '@modules/products/dtos/ICreateProductDTO';
@@ -11,54 +10,55 @@ interface IFindProducts {
   id: string;
 }
 
-class ProductsRepository implements IProductsRepository {
-  private ormRepository: Repository<Product>;
-
-  constructor() {
-    this.ormRepository = getRepository(Product);
-  }
+class FakeProductsRepository implements IProductsRepository {
+  private products: Product[] = [];
 
   public async create({
     name,
     price,
     quantity,
   }: ICreateProductDTO): Promise<Product> {
-    const product = this.ormRepository.create({
+    const product = new Product();
+
+    Object.assign(product, {
+      id: uuid(),
       name,
       price,
       quantity,
     });
 
-    this.ormRepository.save(product);
+    this.products.push(product);
 
     return product;
   }
 
   public async findByName(name: string): Promise<Product | undefined> {
-    const findProductByName = await this.ormRepository.findOne({
-      where: name,
-    });
+    const findProductByName = this.products.find(
+      product => product.name === name,
+    );
 
     return findProductByName;
   }
 
   // public async findAllById(product_id: IFindProducts[]): Promise<Product[]> {
-  //   const findProductsById = await this.ormRepository.find({
-  //     where: {
-  //       id: product_id,
-  //     },
-  //   });
-
-  //   return findProductsById;
+  //   // const findProductsById = this.products.map(
+  //   //   product => {
+  //   //   };
+  //   // );
+  //   // return findProductsById;
   // }
 
   public async updateQuantity(
     data: IUpdateProductsQuantityDTO[],
   ): Promise<Product[]> {
-    const Products = await this.ormRepository.find();
+    const Products = this.products;
 
     const products = data.map(eachProduct => {
       const productToBeUpdated = Products.find(
+        product => eachProduct.id === product.id,
+      );
+
+      const productIndex = Products.findIndex(
         product => eachProduct.id === product.id,
       );
 
@@ -66,9 +66,7 @@ class ProductsRepository implements IProductsRepository {
         throw new AppError(`Product with id:${eachProduct.id} does not exists`);
       }
 
-      productToBeUpdated.quantity += eachProduct.quantity;
-
-      this.ormRepository.save(productToBeUpdated);
+      Products[productIndex].quantity += eachProduct.quantity;
 
       return productToBeUpdated;
     });
@@ -77,4 +75,4 @@ class ProductsRepository implements IProductsRepository {
   }
 }
 
-export default ProductsRepository;
+export default FakeProductsRepository;
