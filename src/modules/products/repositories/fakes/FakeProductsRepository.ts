@@ -40,13 +40,21 @@ class FakeProductsRepository implements IProductsRepository {
     return findProductByName;
   }
 
-  // public async findAllById(product_id: IFindProducts[]): Promise<Product[]> {
-  //   // const findProductsById = this.products.map(
-  //   //   product => {
-  //   //   };
-  //   // );
-  //   // return findProductsById;
-  // }
+  public async findAllById(products: IFindProducts[]): Promise<Product[]> {
+    const findProductsById: Product[] = [];
+
+    products.map(async product => {
+      const productExists = this.products.findIndex(
+        AllProducts => product.id === AllProducts.id,
+      );
+
+      if (productExists) {
+        findProductsById.push(productExists);
+      }
+    });
+
+    return findProductsById;
+  }
 
   public async updateQuantity(
     data: IUpdateProductsQuantityDTO[],
