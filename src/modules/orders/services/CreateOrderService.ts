@@ -34,7 +34,7 @@ class CreateOrderService {
     const customer = await this.customersRepository.findById(customer_id);
 
     if (!customer) {
-      throw new AppError('There is no order with this id');
+      throw new AppError('There is no customer with this id');
     }
 
     const allSelectedProducts = await this.productsRepository.findAllById(

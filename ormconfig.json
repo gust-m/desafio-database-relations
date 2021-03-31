@@ -2,6 +2,7 @@
   "type": "postgres",
   "host": "localhost",
   "port": "5432",
+  "synchronize": true,
   "username": "postgres",
   "password": "docker",
   "database": "gostack_desafio09",

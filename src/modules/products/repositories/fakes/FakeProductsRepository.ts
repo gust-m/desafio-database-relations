@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { uuid } from 'uuidv4';
 
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
@@ -43,13 +44,14 @@ class FakeProductsRepository implements IProductsRepository {
   public async findAllById(products: IFindProducts[]): Promise<Product[]> {
     const findProductsById: Product[] = [];
 
-    products.map(async product => {
-      const productExists = this.products.findIndex(
+    // eslint-disable-next-line array-callback-return
+    products.map(product => {
+      const productIndex = this.products.findIndex(
         AllProducts => product.id === AllProducts.id,
       );
 
-      if (productExists) {
-        findProductsById.push(productExists);
+      if (productIndex) {
+        return findProductsById.push(this.products[productIndex]);
       }
     });
 

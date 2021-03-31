@@ -29,14 +29,16 @@ class ProductsRepository implements IProductsRepository {
       quantity,
     });
 
-    this.ormRepository.save(product);
+    await this.ormRepository.save(product);
 
     return product;
   }
 
   public async findByName(name: string): Promise<Product | undefined> {
     const findProductByName = await this.ormRepository.findOne({
-      where: name,
+      where: {
+        name,
+      },
     });
 
     return findProductByName;
@@ -47,7 +49,9 @@ class ProductsRepository implements IProductsRepository {
 
     products.map(async product => {
       const productExists = await this.ormRepository.findOne({
-        where: product.id,
+        where: {
+          id: product.id,
+        },
       });
 
       if (productExists) {

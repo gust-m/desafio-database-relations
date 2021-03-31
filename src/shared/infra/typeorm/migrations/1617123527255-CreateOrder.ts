@@ -50,8 +50,8 @@ export default class CreateOrder1617123527255 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('orders');
-
     await queryRunner.dropForeignKey('orders', 'customerIdToOrder');
+
+    await queryRunner.dropTable('orders');
   }
 }

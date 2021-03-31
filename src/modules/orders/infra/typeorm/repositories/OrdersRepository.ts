@@ -17,14 +17,16 @@ class OrdersRepository implements IOrdersRepository {
       order_products: products,
     });
 
-    this.ormRepository.save(order);
+    await this.ormRepository.save(order);
 
     return order;
   }
 
   public async findById(id: string): Promise<Order | undefined> {
-    const order = this.ormRepository.findOne({
-      where: id,
+    const order = await this.ormRepository.findOne({
+      where: {
+        id,
+      },
     });
 
     return order;
