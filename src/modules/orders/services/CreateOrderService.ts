@@ -41,11 +41,25 @@ class CreateOrderService {
       products,
     );
 
-    const productsWithProductId = allSelectedProducts.map(productt => ({
-      product_id: productt.id,
-      quantity: productt.quantity,
-      price: productt.price,
-    }));
+    if (allSelectedProducts.length) {
+      throw new AppError('There is no products with given ids');
+    }
+
+    const productsIds = allSelectedProducts.map(product => product.id);
+
+    const inexistentProducts = products.filter(
+      product => !productsIds.includes(product.id),
+    );
+
+    if (inexistentProducts.length) {
+      const inexistentProductsIds = inexistentProducts.map(
+        product => product.id,
+      );
+
+      throw new AppError(
+        `Can not find the product(s) with the id(s): ${inexistentProductsIds}`,
+      );
+    }
 
     const order = await this.ordersRepository.create({
       customer,
