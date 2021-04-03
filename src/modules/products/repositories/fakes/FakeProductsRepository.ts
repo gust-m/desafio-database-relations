@@ -43,14 +43,13 @@ class FakeProductsRepository implements IProductsRepository {
 
   public async findAllById(products: IFindProducts[]): Promise<Product[]> {
     const findProductsById: Product[] = [];
-
     // eslint-disable-next-line array-callback-return
     products.map(product => {
       const productIndex = this.products.findIndex(
         AllProducts => product.id === AllProducts.id,
       );
 
-      if (productIndex) {
+      if (productIndex > -1) {
         return findProductsById.push(this.products[productIndex]);
       }
     });
@@ -76,7 +75,7 @@ class FakeProductsRepository implements IProductsRepository {
         throw new AppError(`Product with id:${eachProduct.id} does not exists`);
       }
 
-      Products[productIndex].quantity += eachProduct.quantity;
+      Products[productIndex].quantity -= eachProduct.quantity;
 
       return productToBeUpdated;
     });

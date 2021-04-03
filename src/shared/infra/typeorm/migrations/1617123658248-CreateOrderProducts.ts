@@ -53,7 +53,8 @@ export default class CreateOrderProducts1617123658248
       }),
     );
 
-    await queryRunner.createForeignKeys('order_products', [
+    await queryRunner.createForeignKey(
+      'order_products',
       new TableForeignKey({
         name: 'orderIdToOrderProducts',
         columnNames: ['order_id'],
@@ -61,7 +62,10 @@ export default class CreateOrderProducts1617123658248
         referencedTableName: 'orders',
         onDelete: 'SET NULL',
       }),
+    );
 
+    await queryRunner.createForeignKey(
+      'order_products',
       new TableForeignKey({
         name: 'productIdToOrderProducts',
         columnNames: ['product_id'],
@@ -69,27 +73,19 @@ export default class CreateOrderProducts1617123658248
         referencedTableName: 'products',
         onDelete: 'SET NULL',
       }),
-    ]);
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKeys('order_products', [
-      new TableForeignKey({
-        name: 'orderIdToOrderProducts',
-        columnNames: ['order_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'orders',
-        onDelete: 'SET NULL',
-      }),
+    await queryRunner.dropForeignKey(
+      'order_products',
+      'orderIdToOrderProducts',
+    );
 
-      new TableForeignKey({
-        name: 'productIdToOrderProducts',
-        columnNames: ['product_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'products',
-        onDelete: 'SET NULL',
-      }),
-    ]);
+    await queryRunner.dropForeignKey(
+      'order_products',
+      'productIdToOrderProducts',
+    );
 
     await queryRunner.dropTable('order_products');
   }

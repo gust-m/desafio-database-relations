@@ -13,24 +13,35 @@ describe('CreateCustomer', () => {
 
   it('should be able to create a new customer', async () => {
     const customer = await createCustomer.execute({
-      name: 'Gustavo',
-      email: 'teste@hotmail.com',
+      name: 'Rocketseat',
+      email: 'oi@rocketseat.com.br',
     });
 
-    expect(customer).toHaveProperty('id');
-    expect(customer.name).toBe('Gustavo');
+    expect(customer).toEqual(
+      expect.objectContaining({
+        name: 'Rocketseat',
+        email: 'oi@rocketseat.com.br',
+      }),
+    );
   });
 
   it('should not be able to create a new customer with same email from another', async () => {
-    await createCustomer.execute({
-      name: 'Gustavo',
-      email: 'teste@hotmail.com',
+    const customer = await createCustomer.execute({
+      name: 'Rocketseat',
+      email: 'oi@rocketseat.com.br',
     });
+
+    expect(customer).toEqual(
+      expect.objectContaining({
+        name: 'Rocketseat',
+        email: 'oi@rocketseat.com.br',
+      }),
+    );
 
     await expect(
       createCustomer.execute({
-        name: 'Gustavo',
-        email: 'teste@hotmail.com',
+        name: 'Rocketseat',
+        email: 'oi@rocketseat.com.br',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });

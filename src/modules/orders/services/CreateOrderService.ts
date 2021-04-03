@@ -61,6 +61,15 @@ class CreateOrderService {
       );
     }
 
+    // eslint-disable-next-line array-callback-return
+    allSelectedProducts.map(product => {
+      const productToBeSubtracted = products.filter(p => p.id === product.id);
+
+      if (productToBeSubtracted[0].quantity > product.quantity) {
+        throw new AppError('Insufficient product quantity');
+      }
+    });
+
     const productsWithPrice = products.map(product => ({
       product_id: product.id,
       quantity: product.quantity,
