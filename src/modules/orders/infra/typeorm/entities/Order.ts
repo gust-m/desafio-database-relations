@@ -16,7 +16,7 @@ class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Customer, customer => customer, { eager: true })
+  @ManyToOne(() => Customer, customer => customer)
   @JoinColumn({ name: 'customer_id', referencedColumnName: 'id' })
   customer: Customer;
 

@@ -1,5 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
-// import { In } from 'typeorm';
+import { getRepository, In, Repository } from 'typeorm';
 
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ICreateProductDTO from '@modules/products/dtos/ICreateProductDTO';
@@ -45,21 +44,15 @@ class ProductsRepository implements IProductsRepository {
   }
 
   public async findAllById(products: IFindProducts[]): Promise<Product[]> {
-    const findProductsById: Product[] = [];
+    const productIds = products.map(product => product.id);
 
-    products.map(async product => {
-      const productExists = await this.ormRepository.findOne({
-        where: {
-          id: product.id,
-        },
-      });
-
-      if (productExists) {
-        findProductsById.push(productExists);
-      }
+    const existentProducts = await this.ormRepository.find({
+      where: {
+        id: In(productIds),
+      },
     });
 
-    return findProductsById;
+    return existentProducts;
   }
 
   public async updateQuantity(
@@ -67,7 +60,7 @@ class ProductsRepository implements IProductsRepository {
   ): Promise<Product[]> {
     const Products = await this.ormRepository.find();
 
-    const products = data.map(eachProduct => {
+    const productsQuantity = data.map(eachProduct => {
       const productToBeUpdated = Products.find(
         product => eachProduct.id === product.id,
       );
@@ -76,14 +69,18 @@ class ProductsRepository implements IProductsRepository {
         throw new AppError(`Product with id:${eachProduct.id} does not exists`);
       }
 
-      productToBeUpdated.quantity += eachProduct.quantity;
+      if (productToBeUpdated.quantity - eachProduct.quantity < 0) {
+        throw new AppError('There is no sufficient quantities in the stock');
+      }
 
-      this.ormRepository.save(productToBeUpdated);
+      productToBeUpdated.quantity -= eachProduct.quantity;
 
       return productToBeUpdated;
     });
 
-    return products;
+    this.ormRepository.save(productsQuantity);
+
+    return productsQuantity;
   }
 }
 

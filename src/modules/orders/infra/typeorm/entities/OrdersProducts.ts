@@ -13,7 +13,7 @@ import Product from '@modules/products/infra/typeorm/entities/Product';
 
 @Entity('order_products')
 class OrdersProducts {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToOne(() => Order, order => order.order_products)

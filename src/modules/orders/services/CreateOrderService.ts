@@ -41,7 +41,7 @@ class CreateOrderService {
       products,
     );
 
-    if (allSelectedProducts.length) {
+    if (!allSelectedProducts.length) {
       throw new AppError('There is no products with given ids');
     }
 
@@ -61,10 +61,18 @@ class CreateOrderService {
       );
     }
 
+    const productsWithPrice = products.map(product => ({
+      product_id: product.id,
+      quantity: product.quantity,
+      price: allSelectedProducts.filter(p => p.id === product.id)[0].price,
+    }));
+
     const order = await this.ordersRepository.create({
       customer,
-      products: productsWithProductId,
+      products: productsWithPrice,
     });
+
+    await this.productsRepository.updateQuantity(products);
 
     return order;
   }
